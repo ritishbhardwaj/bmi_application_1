@@ -1,3 +1,4 @@
+import 'package:bmi_application_1/bmi_results_screen.dart';
 import 'package:bmi_application_1/constants.dart';
 import 'package:bmi_application_1/gender_selection_widget.dart';
 import 'package:bmi_application_1/weight_widget.dart';
@@ -16,6 +17,7 @@ class _BmiCalculatorScreenState extends State<BmiCalculatorScreen> {
   bool isMale =true;
   int weight = 75 ; 
   int age=29;
+  double heeight=130;
 
   @override
   Widget build(BuildContext context) {
@@ -34,49 +36,114 @@ class _BmiCalculatorScreenState extends State<BmiCalculatorScreen> {
                       ),
                       ),
       ),
-      body: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  isMale=true;
-                  setState(() {
-                  });
-
-                },
-                child: GenderSelectionWidget(width: width, isMale: true,  backgroundcolor: isMale ? cardColor : backgroundColor,)
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    isMale=true;
+                    setState(() {
+                    });
+        
+                  },
+                  child: GenderSelectionWidget(width: width, isMale: true,  backgroundcolor: isMale ? cardColor : backgroundColor,)
+                  ),
+                GestureDetector(
+                  onTap: () {
+                    isMale=false;
+                    setState(() {
+                      
+                    });
+                  },
+                  
+                  child: GenderSelectionWidget(width: width, isMale: false, backgroundcolor: !isMale ? cardColor :backgroundColor,)
                 ),
-              GestureDetector(
-                onTap: () {
-                  isMale=false;
-                  setState(() {
-                    
-                  });
-                },
-                
-                child: GenderSelectionWidget(width: width, isMale: false, backgroundcolor: !isMale ? cardColor :backgroundColor,)
+                 
+              ],
+        
+            ),
+
+            // Slider vala box
+             Row(
+                children: [ 
+                  Container(
+                    width: width*0.969,
+                    height: width*0.6,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: cardColor,
+                    ),
+                    child: Column(
+                      children: [
+                        Text("Height (in mts.)",style: titleTextStyle,),
+                        Text("${heeight.toInt()}",style: titleTextStyle,),
+                        
+                        //Slider 
+                        SliderTheme(
+                          data: SliderThemeData().copyWith(
+                            overlayColor: Colors.pink.withOpacity(0.5),
+                            inactiveTrackColor: Colors.red,
+                            activeTrackColor: Colors.green,
+                            thumbColor: Colors.pink
+
+                          ),
+                          child: Slider(min: 100,max: 200, value: heeight,
+                                      onChanged: (value){
+                                        heeight=value;
+                                        setState(() {        });
+                                      },),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
               ),
-               
-            ],
-
-          ),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-
-              // weight vala box
-              WeightWidget(width: width, value: weight, title: "weight", onAddTap: ()=> addSubtractWeight(true),onRemoveTap : ()=> addSubtractWeight(false)),
-
-              
-              //age vala box
-              WeightWidget(width: width, value: age, title: "Age", onAddTap: ()=> addSubtractAge(true), onRemoveTap : ()=> addSubtractAge(false)),
-
-            ],
-          )
-        ],
+            
+        
+            // Neeche vaale 2 box
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                      
+                  // weight vala box
+                  WeightWidget(width: width, value: weight, title: "weight", onAddTap: ()=> addSubtractWeight(true),onRemoveTap : ()=> addSubtractWeight(false)),
+                      
+                  
+                  //age vala box
+                  WeightWidget(width: width, value: age, title: "Age", onAddTap: ()=> addSubtractAge(true), onRemoveTap : ()=> addSubtractAge(false)),
+                      
+                ],
+              ),
+            ),
+            // const Spacer(),
+            GestureDetector(
+              onTap: (){
+                final bmi = weight /((heeight/100)*(heeight/100));
+                print(bmi);
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_)=> ResultScreen(bmi: bmi)),
+                );
+              },
+              child: Container(
+                width: width,
+                color: Colors.pink,
+                height: 80,
+                child: Center(
+                  child: Text(
+                      "Calculated Bmi",
+                      style: titleTextStyle,
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
